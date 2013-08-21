@@ -35,15 +35,15 @@ var methods = {
 
   },
 
+  getNumPages: function() {
+
+  },
+
   setPage: function(page) {
 
   },
 
-  numPages: function() {
-
-  },
-
-  currentPage: function() {
+  getPage: function() {
 
   },
 

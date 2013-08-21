@@ -86,7 +86,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       // Trying to go back should have no effect
       paginated.prevPage();
       assert(!paginated.hasPrevPage());
-      assert(paginated.currentPage() === 0);
+      assert(paginated.getPage() === 0);
     });
 
     it('should not have another page after page 6', function() {
@@ -97,19 +97,19 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       // Going to the next page should have no effect since there
       // is no next page.
       paginated.nextPage();
-      assert(paginated.currentPage() === 6);
+      assert(paginated.getPage() === 6);
       assert(!paginated.hasNextPage());
     });
 
     it('should be able to go back and forth between pages', function() {
       paginated.setPage(0);
-      assert(paginated.currentPage() === 0);
+      assert(paginated.getPage() === 0);
 
       paginated.nextPage();
-      assert(paginated.currentPage() === 1);
+      assert(paginated.getPage() === 1);
 
       paginated.prevPage();
-      assert(paginated.currentPage() === 0);
+      assert(paginated.getPage() === 0);
     });
 
   });

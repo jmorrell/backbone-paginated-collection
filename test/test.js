@@ -112,6 +112,28 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(paginated.getPage() === 0);
     });
 
+    it('should be able to use movePage', function() {
+      paginated.setPage(0);
+      assert(paginated.getPage() === 0);
+
+      paginated.movePage(2);
+      assert(paginated.getPage() === 2);
+
+      paginated.movePage(-2);
+      assert(paginated.getPage() === 0);
+    });
+
+    it('moving beyond the bounds with movePage puts you at the end', function() {
+      paginated.setPage(0);
+      assert(paginated.getPage() === 0);
+
+      paginated.movePage(100);
+      assert(paginated.getPage() === 6);
+
+      paginated.movePage(-100);
+      assert(paginated.getPage() === 0);
+    });
+
   });
 
   describe('changing perPage', function() {
@@ -507,6 +529,76 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
   });
 
   describe('pagination-specific events', function() {
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('paginated:change:perPage', function() {
+      var called = false;
+      var perPage, numPages;
+
+      paginated.on('paginated:change:perPage', function(details) {
+        perPage = details.perPage;
+        numPages = details.numPages;
+        called = true;
+      });
+
+      paginated.setPerPage(10);
+      assert(called);
+      assert(perPage === 10);
+      assert(numPage === 10);
+
+      called = false;
+
+      paginated.setPerPage(20);
+      assert(called);
+      assert(perPage === 20);
+      assert(numPage === 5);
+    });
+
+    it('paginated:change:page', function() {
+      var called = false;
+      var page;
+
+      paginated.on('paginated:change:page', function(details) {
+        page = details.page;
+        called = true;
+      });
+
+      assert(!called);
+
+      paginated.nextPage();
+      assert(called);
+      assert(page === 1);
+      assert(page === paginated.getPage());
+      called = false;
+
+      paginated.prevPage();
+      assert(called);
+      assert(page === 0);
+      assert(page === paginated.getPage());
+      called = false;
+
+      paginated.setPage(6);
+      assert(called);
+      assert(page === 6);
+      assert(page === paginated.getPage());
+      called = false;
+
+      paginated.movePage(-1);
+      assert(called);
+      assert(page === 5);
+      assert(page === paginated.getPage());
+      called = false;
+
+      paginated.setPerPage(10);
+      assert(called);
+      assert(page === 0);
+      assert(page === paginated.getPage());
+      called = false;
+    });
 
   });
 

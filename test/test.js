@@ -114,6 +114,26 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
   });
 
+  describe('changing perPage', function() {
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('should reset the current page to 0', function() {
+      assert(paginated.getNumPages() === 7);
+      assert(paginated.getPage() === 0);
+
+      paginated.setPage(6);
+      assert(paginated.getPage() === 6);
+
+      paginated.setPerPage(5);
+      assert(paginated.getPage() === 0);
+    });
+
+  });
+
   describe('removing a model in the superset', function() {
 
     beforeEach(function() {
@@ -252,6 +272,11 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
   describe('destroying a model in the superset', function() {
 
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
     it('should update the current page if the model was there', function() {
       // The first page should include models 0 - 14
       var current = paginated.pluck('n');
@@ -317,6 +342,31 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
   });
 
   describe('reseting the superset', function() {
+    var newData = _.map(_.range(100, 150), function(i) { return { n: i }; });
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('should update everything', function() {
+      superset.reset(newData);
+
+      assert(paginated.getPage() === 0);
+      assert(paginated.getNumPages() === 4);
+      assert(paginated.length === 15);
+
+      paginated.setPage(3);
+
+      assert(paginated.getPage() === 3);
+      assert(paginated.getNumPages() === 4);
+      assert(paginated.length === 5);
+
+      paginated.setPerPage(5);
+      assert(paginated.getPage() === 0);
+      assert(paginated.getNumPages() === 10);
+      assert(paginated.length === 5);
+    });
 
   });
 

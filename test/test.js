@@ -183,6 +183,71 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
   describe('adding a model in the superset', function() {
 
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('should update the current page if the model was there', function() {
+      // The first page should include models 0 - 14
+      var current = paginated.pluck('n');
+      assert(_.isEqual(current, _.range(15)));
+      assert(paginated.length === 15);
+
+      var model = new Backbone.Model({ n: -1 });
+      superset.unshift(firstModel);
+
+      // We should still have 7 pages
+      assert(paginated.getNumPages() === 7);
+
+      // The first page should now include models -1 - 13
+      var updated = paginated.pluck('n');
+      assert(_.isEqual(updated, _.range(-1, 14)));
+      assert(paginated.length === 15);
+    });
+
+    it('should affect which pages other models fall on', function() {
+      paginated.setPage(6);
+
+      // The last page should include models 90 - 99
+      var current = paginated.pluck('n');
+      assert(paginated.length === 10);
+      assert(_.isEqual(current, _.range(90, 100)));
+
+      var model = new Backbone.Model({ n: -1 });
+      superset.unshift(firstModel);
+
+      // We should still have 7 pages
+      assert(paginated.getNumPages() === 7);
+
+      // The last page should now include models 89 - 99
+      var updated = paginated.pluck('n');
+      assert(paginated.length === 11);
+      assert(_.isEqual(updated, _.range(89, 100)));
+    });
+
+    it('should change the number of pages when necessary', function() {
+      // We can evenly divide the number of pages with 10 models on each
+      paginated.setPerPage(10);
+
+      assert(paginated.getNumPages() === 10);
+
+      // The last page has 10 models, so adding one should move us
+      // to 11 pages
+      superset.add({ n: 100 });
+      assert(paginated.getNumPages() === 11);
+
+      // Adding another 9 models should not change the number of pages
+      for (var i = 0; i < 9; i++) {
+        superset.add({ n: i });
+        assert(paginated.getNumPages() === 11);
+      }
+
+      // And adding one more should get us to 12
+      superset.add({ n: 100 });
+      assert(paginated.getNumPages() === 12);
+    });
+
   });
 
   describe('destroying a model in the superset', function() {

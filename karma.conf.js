@@ -15,7 +15,7 @@ files = [
   MOCHA_ADAPTER,
   'bower_components/underscore/underscore.js',
   'bower_components/backbone/backbone.js',
-  'backbone-filtered-collection.js',
+  'backbone-paginated-collection.js',
   'bower_components/chai/chai.js',
   'test/**/*.js'
 ];

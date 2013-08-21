@@ -252,6 +252,68 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
   describe('destroying a model in the superset', function() {
 
+    it('should update the current page if the model was there', function() {
+      // The first page should include models 0 - 14
+      var current = paginated.pluck('n');
+      assert(_.isEqual(current, _.range(15)));
+      assert(paginated.length === 15);
+
+      var firstModel = superset.first();
+      assert(firstModel.get('n') === 0);
+
+      // Now we *destroy it!*
+      firstModel.destroy();
+
+      // We should still have 7 pages
+      assert(paginated.getNumPages() === 7);
+
+      // The first page should now include models 1 - 15
+      var updated = paginated.pluck('n');
+      assert(_.isEqual(updated, _.range(1, 16)));
+      assert(paginated.length === 15);
+    });
+
+    it('should affect which pages other models fall on', function() {
+      paginated.setPage(6);
+
+      // The last page should include models 90 - 99
+      var current = paginated.pluck('n');
+      assert(paginated.length === 10);
+      assert(_.isEqual(current, _.range(90, 100)));
+
+      var firstModel = superset.first();
+      assert(firstModel.get('n') === 0);
+
+      // Now we *destroy it!*
+      firstModel.destroy();
+
+      // We should still have 7 pages
+      assert(paginated.getNumPages() === 7);
+
+      // The last page should now include models 91 - 99
+      var updated = paginated.pluck('n');
+      assert(paginated.length === 9);
+      assert(_.isEqual(updated, _.range(91, 100)));
+    });
+
+    it('should change the number of pages when necessary', function() {
+      // We can evenly divide the number of pages with 10 models on each
+      paginated.setPerPage(10);
+
+      assert(paginated.getNumPages() === 10);
+
+      // The last page has 10 models, so removing 9 should keep us
+      // with 10 pages
+      for (var i = 0; i < 9; i++) {
+        superset.last().destroy();
+        assert(paginated.getNumPages() === 10);
+      }
+
+      // Now removing one more should update us to only 9 pages
+      superset.last().destroy();
+      assert(paginated.getNumPages === 9);
+    });
+
   });
 
   describe('reseting the superset', function() {

@@ -371,25 +371,137 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
   });
 
   describe('pipe events from the subset to the container', function() {
+    var newData = _.map(_.range(100, 150), function(i) { return { n: i }; });
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
 
     it('add event', function() {
+      var model = new Backbone.Model({ n: 200 });
 
+      var called = false;
+      paginated.on('add', function(m, collection) {
+        assert(m === model);
+        assert(collection === paginated);
+        called = true;
+      });
+
+      superset.unshift(model);
+
+      assert(called);
+    });
+
+    it("no add event when the model isn't on the current page", function() {
+      var model = new Backbone.Model({ n: 200 });
+
+      var called = false;
+      paginated.on('add', function(m, collection) {
+        assert(m === model);
+        assert(collection === paginated);
+        called = true;
+      });
+
+      superset.add(model);
+
+      assert(called);
     });
 
     it('remove event', function() {
+      var model = superset.first();
 
+      var called = false;
+      paginated.on('remove', function(m, collection) {
+        assert(m === model);
+        assert(collection === paginated);
+        called = true;
+      });
+
+      superset.remove(model);
+
+      assert(called);
+    });
+
+    it("no remove event when the model isn't on the current page", function() {
+      var model = superset.last();
+
+      var called = false;
+      paginated.on('remove', function(m, collection) {
+        assert(m === model);
+        assert(collection === paginated);
+        called = true;
+      });
+
+      superset.remove(model);
+
+      assert(called);
     });
 
     it('reset event', function() {
+      var called = false;
+      paginated.on('reset', function(collection) {
+        assert(collection === paginated);
+        called = true;
+      });
 
+      superset.reset(newData);
+
+      assert(called);
     });
 
     it('model change event', function() {
+      var model = superset.first();
 
+      var called = false;
+      paginated.on('change', function(m) {
+        assert(m === model);
+        called = true;
+      });
+
+      model.set({ n: 100 });
+
+      assert(called);
+    });
+
+    it("no model change event when model isn't on the current page", function() {
+      var model = superset.last();
+
+      var called = false;
+      paginated.on('change', function(m) {
+        called = true;
+      });
+
+      model.set({ n: 100 });
+
+      assert(!called);
     });
 
     it('model change event: specific key', function() {
+      var model = superset.first();
 
+      var called = false;
+      paginated.on('change:n', function(m) {
+        assert(m === model);
+        called = true;
+      });
+
+      model.set({ n: 100 });
+
+      assert(called);
+    });
+
+    it("no change: key event when model isn't on the current page", function() {
+      var model = superset.last();
+
+      var called = false;
+      paginated.on('change:n', function(m) {
+        called = true;
+      });
+
+      model.set({ n: 100 });
+
+      assert(!called);
     });
 
   });

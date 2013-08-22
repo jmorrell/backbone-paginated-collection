@@ -2,8 +2,8 @@
 ;(function (root) { function moduleDefinition(Backbone, _) {
 
 function recalculatePagination() {
-  var length = this._superset.length;
-  var perPage = this._perPage;
+  var length = this.superset().length;
+  var perPage = this.getPerPage();
 
   // If the # of objects can be exactly divided by the number
   // of pages, it would leave an empty last page if we took
@@ -11,17 +11,17 @@ function recalculatePagination() {
   var totalPages = length % perPage === 0 ?
     (length / perPage) : Math.floor(length / perPage) + 1;
 
-  this._page = 0;
   this._totalPages = totalPages;
+  this.setPage(0);
 
   updatePagination.call(this);
 }
 
 function updatePagination() {
-  var start = this._page * this._perPage;
-  var end = start + this._perPage;
+  var start = this.getPage() * this.getPerPage();
+  var end = start + this.getPerPage();
 
-  this._collection.reset(this._superset.toArray().slice(start, end));
+  this._collection.reset(this.superset().toArray().slice(start, end));
 
   // A drawback is that we will have to update the length ourselves
   // every time we modify this collection.
@@ -47,9 +47,8 @@ function Paginated(superset, options) {
   // The idea is to keep an internal backbone collection with the paginated
   // set, and expose limited functionality.
   this._collection = new Backbone.Collection(superset.toArray());
-  this._perPage = options ? options.perPage: this._defaultPerPage;
+  this.setPerPage(options ? options.perPage: this._defaultPerPage);
 
-  recalculatePagination.call(this);
   this._superset.on('add', onModelAdd, this);
   this._superset.on('remove', onModelRemove, this);
   this._superset.on('reset', onReset, this);
@@ -62,6 +61,28 @@ var methods = {
   setPerPage: function(perPage) {
     this._perPage = perPage;
     recalculatePagination.call(this);
+
+    this.trigger('paginated:change:perPage', {
+      perPage: perPage,
+      numPages: this.getNumPages()
+    });
+  },
+
+  setPage: function(page) {
+    // The lowest page we could set
+    var lowerLimit = 0;
+    // The highest page we could set
+    var upperLimit = this.getNumPages() - 1;
+
+    // If the page is higher or lower than these limits,
+    // set it to the limit.
+    page = page > lowerLimit ? page : lowerLimit;
+    page = page < upperLimit ? page : upperLimit;
+
+    this._page = page;
+    updatePagination.call(this);
+
+    this.trigger('paginated:change:page', { page: page });
   },
 
   getPerPage: function() {
@@ -72,23 +93,16 @@ var methods = {
     return this._totalPages;
   },
 
-  setPage: function(page) {
-    if (page >= 0 && page < this.getNumPages()) {
-      this._page = page;
-      updatePagination.call(this);
-    }
-  },
-
   getPage: function() {
     return this._page;
   },
 
   hasNextPage: function() {
-    return this.getPage() < this.getNumPages();
+    return this.getPage() < this.getNumPages() - 1;
   },
 
   hasPrevPage: function() {
-    return this.getPage > 0;
+    return this.getPage() > 0;
   },
 
   nextPage: function() {
@@ -100,7 +114,7 @@ var methods = {
   },
 
   movePage: function(delta) {
-    this.setPage(this.getPage + delta);
+    this.setPage(this.getPage() + delta);
   },
 
   superset: function() {

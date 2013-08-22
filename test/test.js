@@ -13,9 +13,9 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       paginated = new PaginatedCollection(superset);
     });
 
-    it('perPage should be the same as defaultPerPage', function() {
-      assert(paginated.length === paginated.defaultPerPage);
-      assert(paginated.getPerPage() === paginated.defaultPerPage);
+    it('perPage should have a default of 20 items per page', function() {
+      assert(paginated.length === 20);
+      assert(paginated.getPerPage() === 20);
     });
 
     it('should be on page 0', function() {
@@ -548,14 +548,14 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       paginated.setPerPage(10);
       assert(called);
       assert(perPage === 10);
-      assert(numPage === 10);
+      assert(numPages === 10);
 
       called = false;
 
       paginated.setPerPage(20);
       assert(called);
       assert(perPage === 20);
-      assert(numPage === 5);
+      assert(numPages === 5);
     });
 
     it('paginated:change:page', function() {

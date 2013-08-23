@@ -237,7 +237,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(paginated.length === 15);
 
       var model = new Backbone.Model({ n: -1 });
-      superset.unshift(firstModel);
+      superset.unshift(model);
 
       // We should still have 7 pages
       assert(paginated.getNumPages() === 7);
@@ -257,7 +257,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(_.isEqual(current, _.range(90, 100)));
 
       var model = new Backbone.Model({ n: -1 });
-      superset.unshift(firstModel);
+      superset.unshift(model);
 
       // We should still have 7 pages
       assert(paginated.getNumPages() === 7);

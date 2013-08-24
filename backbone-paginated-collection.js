@@ -12,8 +12,6 @@ function recalculatePagination() {
     (length / perPage) : Math.floor(length / perPage) + 1;
 
   this._totalPages = totalPages;
-  this.setPage(0);
-
   updatePagination.call(this);
 }
 
@@ -28,16 +26,19 @@ function updatePagination() {
   this.length = this._collection.length;
 }
 
-function onModelAdd() {
-  console.log('add');
-}
+function pipeEvents() {
+  var args = _.toArray(arguments);
 
-function onModelRemove() {
-  console.log('remove');
-}
+  // replace any references to `this._collection` with `this`
+  for (var i = 1; i < args.length; i++) {
+    // Is there a better way to check for this?
+    // List all of the possible events?
+    if (args[i].models && args[i].models.length === this._collection.models.length) {
+      args[i] = this;
+    }
+  }
 
-function onReset() {
-  console.log('reset');
+  this.trigger.apply(this, args);
 }
 
 function Paginated(superset, options) {
@@ -49,9 +50,10 @@ function Paginated(superset, options) {
   this._collection = new Backbone.Collection(superset.toArray());
   this.setPerPage(options ? options.perPage: this._defaultPerPage);
 
-  this._superset.on('add', onModelAdd, this);
-  this._superset.on('remove', onModelRemove, this);
-  this._superset.on('reset', onReset, this);
+  this.listenTo(this._superset, 'add', recalculatePagination);
+  this.listenTo(this._superset, 'remove', recalculatePagination);
+  this.listenTo(this._superset, 'reset', recalculatePagination);
+  this.listenTo(this._collection, 'all', pipeEvents);
 }
 
 var methods = {
@@ -61,6 +63,7 @@ var methods = {
   setPerPage: function(perPage) {
     this._perPage = perPage;
     recalculatePagination.call(this);
+    this.setPage(0);
 
     this.trigger('paginated:change:perPage', {
       perPage: perPage,

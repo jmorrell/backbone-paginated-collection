@@ -390,6 +390,13 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(paginated.length === 5);
     });
 
+    it('should reset the current page to 0', function() {
+      // TODO: decide if this is really what I want to do
+      paginated.setPage(3);
+      superset.reset(newData);
+      assert(paginated.getPage() === 0);
+    });
+
   });
 
   describe('pipe events from the subset to the container', function() {

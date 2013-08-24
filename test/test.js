@@ -218,7 +218,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
       // Now removing one more should update us to only 9 pages
       superset.remove(superset.last());
-      assert(paginated.getNumPages === 9);
+      assert(paginated.getNumPages() === 9);
     });
 
   });
@@ -358,7 +358,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
 
       // Now removing one more should update us to only 9 pages
       superset.last().destroy();
-      assert(paginated.getNumPages === 9);
+      assert(paginated.getNumPages() === 9);
     });
 
   });

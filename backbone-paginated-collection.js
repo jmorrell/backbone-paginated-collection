@@ -141,8 +141,6 @@ var collectionMethods = [
   'findWhere', 'get', 'at', 'slice', 'where', 'findWhere'
 ];
 
-
-
 _.each(collectionMethods, function(method) {
   methods[method] = function() {
     return Backbone.Collection.prototype[method].apply(this._collection, arguments);

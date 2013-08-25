@@ -27,9 +27,6 @@ function updatePagination() {
   var end = start + this.getPerPage();
 
   this._collection.reset(this.superset().toArray().slice(start, end));
-
-  // A drawback is that we will have to update the length ourselves
-  // every time we modify this collection.
   this.length = this._collection.length;
 }
 

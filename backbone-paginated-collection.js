@@ -12,7 +12,14 @@ function recalculatePagination() {
     (length / perPage) : Math.floor(length / perPage) + 1;
 
   this._totalPages = totalPages;
-  updatePagination.call(this);
+
+  // If the current page no longer exists, switch to the last
+  // existing page in the set.
+  if (this.getPage() >= totalPages) {
+    this.setPage(totalPages - 1);
+  } else {
+    updatePagination.call(this);
+  }
 }
 
 function updatePagination() {

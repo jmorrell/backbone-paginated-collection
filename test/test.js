@@ -390,11 +390,57 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(paginated.length === 5);
     });
 
-    it('should reset the current page to 0', function() {
-      // TODO: decide if this is really what I want to do
-      paginated.setPage(3);
+  });
+
+  // This describes the case in which a model is removed or the superset is reset
+  // such that the current page no longer makes exists. This only happens when the
+  // new collection is smaller than the old one (adding models will never cause
+  // this problem). Following the principle of least surprise leads us to making
+  // sure we're always on the last existing page when the current page disappears.
+  describe("when the page we're on no longer exists", function() {
+    var newData = _.map(_.range(100, 150), function(i) { return { n: i }; });
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('removing a model', function() {
+      // We can evenly divide the number of pages with 10 models on each
+      paginated.setPerPage(10);
+
+      // Go to the last page
+      paginated.setPage(9);
+
+      assert(paginated.getNumPages() === 10);
+      assert(paginated.getPage() === 9);
+
+      // The last page has 10 models, so removing 9 should keep us
+      // with 10 pages
+      for (var i = 0; i < 9; i++) {
+        superset.remove(superset.last());
+        assert(paginated.getPage() === 9);
+      }
+
+      // Now removing one more should update us to only 9 pages
+      superset.remove(superset.last());
+      // And we should now be on the last page, page 8
+      assert(paginated.getPage() === 8);
+    });
+
+    it('resetting the superset', function() {
+      // We can evenly divide the number of pages with 10 models on each
+      paginated.setPerPage(10);
+
+      // Set the current page to something that won't exist after the reset
+      paginated.setPage(7);
+
+      // Reset the superset with 50 models. There will only be 5 pages
       superset.reset(newData);
-      assert(paginated.getPage() === 0);
+
+      // We should now be on the last page since page 7 no longer exists
+      assert(paginated.getNumPages() === 5);
+      assert(paginated.getPage() === 4);
     });
 
   });
@@ -407,12 +453,11 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       paginated = new PaginatedCollection(superset, { perPage: 15 });
     });
 
-    it('add event', function() {
+    it('reset event on add', function() {
       var model = new Backbone.Model({ n: 200 });
 
       var called = false;
-      paginated.on('add', function(m, collection) {
-        assert(m === model);
+      paginated.on('reset', function(collection) {
         assert(collection === paginated);
         called = true;
       });
@@ -422,12 +467,11 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(called);
     });
 
-    it("no add event when the model isn't on the current page", function() {
+    it("no reset event when adding a model not on the current page", function() {
       var model = new Backbone.Model({ n: 200 });
 
       var called = false;
-      paginated.on('add', function(m, collection) {
-        assert(m === model);
+      paginated.on('reset', function(collection) {
         assert(collection === paginated);
         called = true;
       });
@@ -437,12 +481,11 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(called);
     });
 
-    it('remove event', function() {
+    it('reset event on remove', function() {
       var model = superset.first();
 
       var called = false;
-      paginated.on('remove', function(m, collection) {
-        assert(m === model);
+      paginated.on('reset', function(collection) {
         assert(collection === paginated);
         called = true;
       });
@@ -452,12 +495,11 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       assert(called);
     });
 
-    it("no remove event when the model isn't on the current page", function() {
+    it("no reset event when removing a model not on the current page", function() {
       var model = superset.last();
 
       var called = false;
-      paginated.on('remove', function(m, collection) {
-        assert(m === model);
+      paginated.on('reset', function(collection) {
         assert(collection === paginated);
         called = true;
       });

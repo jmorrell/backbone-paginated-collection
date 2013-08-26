@@ -68,23 +68,72 @@ on the global object.
 
 ### new PaginatedCollection
 
+Initialize a new PaginatedCollection by passing in the original collection and optionally
+an options hash with the number of models per page.
+
+```javascript
+var paginated = new PaginatedCollection(originalCollection);
+
+// or
+
+var paginated = new PaginatedCollection(originalCollection, { perPage: 15 });
+```
+
 ### paginated.setPerPage(perPage)
+
+Change the number of models displayed per page. This will reset the current page to 0.
+
 ### paginated.setPage(page)
+
+Change the page. If the page is less than 0, it will be set to 0. If it is longer than
+the number of pages, the last page will be selected.
+
 ### paginated.getPerPage()
+
+Return the current setting for number of models per page.
+
 ### paginated.getNumPages()
+
+Return the current number of pages.
+
 ### paginated.getPage()
+
+Return the current page. E.G. if this returns 0, you're on the first page.
+
 ### paginated.hasNextPage()
+
+Returns true if this is not the last page.
+
 ### paginated.hasPrevPage()
+
+Returns true if this is not the first page.
+
+### paginated.movePage(delta)
+
+Move `delta` pages forwards or backwards (if `delta` is negative).
+
+Ex: `paginated.movePage(-2)` will move two pages back.
+
 ### paginated.nextPage()
+
+Move to the next page. Equivalent to `paginated.movePage(1)`.
+
 ### paginated.prevPage()
-### paginated.movePage()
+
+Move to the previous page. Equivalent to `paginated.movePage(-1)`.
+
 ### paginated.superset()
+
+Return a reference to the original collection.
+
 
 ## Events
 
 `add`, `remove`, `change`, `reset` should fire as you expect.
 
+`paginated:change:perPage` - Fired whenever the number of models per page is changed.
 
+`paginated:change:page` - Fired whenever the page is changed.
 
 ## Testing
 

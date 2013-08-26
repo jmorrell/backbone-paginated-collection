@@ -129,7 +129,9 @@ Return a reference to the original collection.
 
 ## Events
 
-`add`, `remove`, `change`, `reset` should fire as you expect.
+`reset` - Currently, everytime the pagination changes, the collection will fire a `reset` event.
+
+`change` - should fire as you expect.
 
 `paginated:change:perPage` - Fired whenever the number of models per page is changed.
 

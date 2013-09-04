@@ -1,6 +1,6 @@
 # backbone-paginated-collection
 
-[![Build Status](https://secure.travis-ci.org/user/backbone-paginated-collection.png?branch=master)](http://travis-ci.org/user/backbone-paginated-collection)
+[![Build Status](https://secure.travis-ci.org/jmorrell/backbone-paginated-collection.png?branch=master)](http://travis-ci.org/jmorrell/backbone-paginated-collection)
 
 Create a read-only paginated version of a backbone collection that stays in sync.
 

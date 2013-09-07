@@ -16,14 +16,19 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var proxyCollection = require('backbone-collection-proxy');
 
-function updatePagination() {
+
+function getPageLimits() {
   var start = this.getPage() * this.getPerPage();
   var end = start + this.getPerPage();
-
-  this._collection.reset(this.superset().toArray().slice(start, end));
+  return [start, end];
 }
 
-function recalculatePagination() {
+function updatePagination() {
+  var pages = getPageLimits.call(this);
+  this._collection.reset(this.superset().slice(pages[0], pages[1]));
+}
+
+function updateNumPages() {
   var length = this.superset().length;
   var perPage = this.getPerPage();
 
@@ -35,12 +40,37 @@ function recalculatePagination() {
 
   this._totalPages = totalPages;
 
-  // If the current page no longer exists, switch to the last
-  // existing page in the set.
+  // Test to see if we are past the last page, and if so,
+  // move back. Return true so that we can test to see if
+  // this happened.
   if (this.getPage() >= totalPages) {
     this.setPage(totalPages - 1);
-  } else {
-    updatePagination.call(this);
+    return true;
+  }
+}
+
+function recalculatePagination() {
+  if (updateNumPages.call(this)) { return; }
+  updatePagination.call(this);
+}
+
+function onAddRemove(model, collection, options) {
+  if (updateNumPages.call(this)) { return; }
+
+  var pages = getPageLimits.call(this);
+  var start = pages[0], end = pages[1];
+
+  var toAdd = _.difference(this.superset().slice(start, end), this._collection.toArray())[0];
+  var toRemove = _.difference(this._collection.toArray(), this.superset().slice(start, end))[0];
+
+  if (toRemove) {
+    this._collection.remove(toRemove);
+  }
+
+  if (toAdd) {
+    this._collection.add(toAdd, {
+      at: this.superset().indexOf(toAdd) - start
+    });
   }
 }
 
@@ -55,8 +85,7 @@ function Paginated(superset, options) {
 
   proxyCollection(this._collection, this);
 
-  this.listenTo(this._superset, 'add', recalculatePagination);
-  this.listenTo(this._superset, 'remove', recalculatePagination);
+  this.listenTo(this._superset, 'add remove', onAddRemove);
   this.listenTo(this._superset, 'reset', recalculatePagination);
 }
 

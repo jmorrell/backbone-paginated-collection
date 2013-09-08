@@ -1,6 +1,6 @@
 var assert = chai.assert;
 
-describe('Backbone.Filtering.PaginatedCollection', function() {
+describe('PaginatedCollection', function() {
 
   var superset, paginated;
   var mockData = _.map(_.range(100), function(i) { return { n: i }; });
@@ -511,7 +511,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       // Add the model in the 91st index. This will be on a later page
       superset.add(model, { at: 90 });
 
-      // The set should still be 29-43
+      // The set should still be 30-44
       assert(_.isEqual(paginated.pluck('n'), _.range(30, 45)));
 
       assert(!resetEvent);
@@ -559,7 +559,7 @@ describe('Backbone.Filtering.PaginatedCollection', function() {
       // remove the first model from the superset
       superset.remove(superset.last());
 
-      // The set should still be 29-43
+      // The set should still be 30-44
       assert(_.isEqual(paginated.pluck('n'), _.range(30, 45)));
 
       assert(!resetEvent);

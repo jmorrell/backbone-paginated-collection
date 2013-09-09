@@ -117,6 +117,7 @@ var methods = {
 
   removePagination: function() {
     this.setPerPage(null);
+    return this;
   },
 
   setPerPage: function(perPage) {
@@ -128,6 +129,8 @@ var methods = {
       perPage: perPage,
       numPages: this.getNumPages()
     });
+
+    return this;
   },
 
   setPage: function(page) {
@@ -145,6 +148,7 @@ var methods = {
     updatePagination.call(this);
 
     this.trigger('paginated:change:page', { page: page });
+    return this;
   },
 
   getPerPage: function() {
@@ -169,14 +173,17 @@ var methods = {
 
   nextPage: function() {
     this.movePage(1);
+    return this;
   },
 
   prevPage: function() {
     this.movePage(-1);
+    return this;
   },
 
   movePage: function(delta) {
     this.setPage(this.getPage() + delta);
+    return this;
   },
 
   superset: function() {

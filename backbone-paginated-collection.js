@@ -16,7 +16,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var proxyCollection = require('backbone-collection-proxy');
 
-
 function getPageLimits() {
   var start = this.getPage() * this.getPerPage();
   var end = start + this.getPerPage();
@@ -54,14 +53,38 @@ function recalculatePagination() {
   updatePagination.call(this);
 }
 
+// Given two arrays of backbone models, with at most one model added
+// and one model removed from each, return the model in arrayA that
+// is not in arrayB or undefined.
+function difference(arrayA, arrayB) {
+  var maxLength = _.max([ arrayA.length, arrayB.length ]);
+
+  for (var i = 0, j = 0; i < maxLength; i += 1, j += 1) {
+    if (arrayA[i] !== arrayB[j]) {
+      if (arrayB[i-1] === arrayA[i]) {
+        j -= 1;
+      } else if (arrayB[i+1] === arrayA[i]) {
+        j += 1;
+      } else {
+        return arrayA[i];
+      }
+    }
+  }
+}
+
 function onAddRemove(model, collection, options) {
   if (updateNumPages.call(this)) { return; }
 
   var pages = getPageLimits.call(this);
   var start = pages[0], end = pages[1];
 
-  var toAdd = _.difference(this.superset().slice(start, end), this._collection.toArray())[0];
-  var toRemove = _.difference(this._collection.toArray(), this.superset().slice(start, end))[0];
+  // We are only adding and removing at most one model at a time,
+  // so we can find just those two models. We could probably rewrite
+  // `collectionDifference` to only make on pass instead of two. This
+  // is a bottleneck on the total size of collections. I was getting
+  // slow unit tests around 30,000 models / page in Firefox.
+  var toAdd = difference(this.superset().slice(start, end), this._collection.toArray());
+  var toRemove = difference(this._collection.toArray(), this.superset().slice(start, end));
 
   if (toRemove) {
     this._collection.remove(toRemove);
@@ -81,7 +104,8 @@ function Paginated(superset, options) {
   // The idea is to keep an internal backbone collection with the paginated
   // set, and expose limited functionality.
   this._collection = new Backbone.Collection(superset.toArray());
-  this.setPerPage(options ? options.perPage: this._defaultPerPage);
+  this._page = 0;
+  this.setPerPage((options && options.perPage) ? options.perPage : null);
 
   proxyCollection(this._collection, this);
 
@@ -91,7 +115,9 @@ function Paginated(superset, options) {
 
 var methods = {
 
-  _defaultPerPage: 20,
+  removePagination: function() {
+    this.setPerPage(null);
+  },
 
   setPerPage: function(perPage) {
     this._perPage = perPage;
@@ -122,7 +148,7 @@ var methods = {
   },
 
   getPerPage: function() {
-    return this._perPage;
+    return this._perPage || this.superset().length;
   },
 
   getNumPages: function() {

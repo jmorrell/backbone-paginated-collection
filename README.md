@@ -26,50 +26,13 @@ paginated.setPage(3);
 assert(paginated.length === 1);
 ```
 
-## Installation
-
-### Usage with Bower
-
-Install with [Bower](http://bower.io):
-
-```
-bower install backbone-paginated-collection
-```
-
-The component can be used as a Common JS module, an AMD module, or a global.
-
-### Usage with Browserify
-
-Install with npm, use with [Browserify](http://browserify.org/)
-
-```
-> npm install backbone-paginated-collection
-```
-
-and in your code
-
-```javascript
-var PaginatedCollection = require('backbone-paginated-collection');
-```
-
-### Usage as browser global
-
-You can include `backbone-paginated-collection.js` directly in a script tag. Make 
-sure that it is loaded after underscore and backbone. It's exported as `PaginatedCollection`
-on the global object.
-
-```HTML
-<script src="underscore.js"></script>
-<script src="backbone.js"></script>
-<script src="backbone-paginated-collection.js"></script>
-```
-
 ## Methods
 
 ### new PaginatedCollection
 
 Initialize a new PaginatedCollection by passing in the original collection and optionally
-an options hash with the number of models per page.
+an options hash with the number of models per page. If no `perPage` argument is passed
+the collection will always maintain the length of the original collection.
 
 ```javascript
 var paginated = new PaginatedCollection(originalCollection);
@@ -122,6 +85,11 @@ Move to the next page. Equivalent to `paginated.movePage(1)`.
 
 Move to the previous page. Equivalent to `paginated.movePage(-1)`.
 
+### paginated.removePagination()
+
+Get rid of any paginated settings. This means the paginated collection
+will always be equal to the superset.
+
 ### paginated.superset()
 
 Return a reference to the original collection.
@@ -133,9 +101,48 @@ Return a reference to the original collection.
 
 `change` - should fire as you expect.
 
-`paginated:change:perPage` - Fired whenever the number of models per page is changed.
+`paginated:change:perPage` - Fired whenever the number of models per page is changed. If you
+                             remove the pagination settings, `perPage` will be passed as `null`.
 
 `paginated:change:page` - Fired whenever the page is changed.
+
+## Installation
+
+### Usage with Bower
+
+Install with [Bower](http://bower.io):
+
+```
+bower install backbone-paginated-collection
+```
+
+The component can be used as a Common JS module, an AMD module, or a global.
+
+### Usage with Browserify
+
+Install with npm, use with [Browserify](http://browserify.org/)
+
+```
+> npm install backbone-paginated-collection
+```
+
+and in your code
+
+```javascript
+var PaginatedCollection = require('backbone-paginated-collection');
+```
+
+### Usage as browser global
+
+You can include `backbone-paginated-collection.js` directly in a script tag. Make 
+sure that it is loaded after underscore and backbone. It's exported as `PaginatedCollection`
+on the global object.
+
+```HTML
+<script src="underscore.js"></script>
+<script src="backbone.js"></script>
+<script src="backbone-paginated-collection.js"></script>
+```
 
 ## Testing
 

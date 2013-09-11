@@ -139,7 +139,7 @@ var methods = {
   },
 
   getPerPage: function() {
-    return this._perPage || this.superset().length;
+    return this._perPage || this.superset().length || 1;
   },
 
   getNumPages: function() {

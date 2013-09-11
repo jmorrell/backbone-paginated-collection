@@ -5,6 +5,50 @@ describe('PaginatedCollection', function() {
   var superset, paginated;
   var mockData = _.map(_.range(100), function(i) { return { n: i }; });
 
+  describe('empty superset', function() {
+
+    beforeEach(function() {
+      superset = new Backbone.Collection([]);
+      paginated = new PaginatedCollection(superset);
+    });
+
+    it('should have 0 pages', function() {
+      assert(paginated.getNumPages() === 0);
+    });
+
+    it('should have 0 length', function() {
+      assert(paginated.length === 0);
+    });
+
+    it('should not have a next or previous page', function() {
+      assert(!paginated.hasNextPage());
+      assert(!paginated.hasPrevPage());
+    });
+
+  });
+
+  describe('empty superset with perPage', function() {
+
+    beforeEach(function() {
+      superset = new Backbone.Collection([]);
+      paginated = new PaginatedCollection(superset, { perPage: 10 });
+    });
+
+    it('should have 0 pages', function() {
+      assert(paginated.getNumPages() === 0);
+    });
+
+    it('should have 0 length', function() {
+      assert(paginated.length === 0);
+    });
+
+    it('should not have a next or previous page', function() {
+      assert(!paginated.hasNextPage());
+      assert(!paginated.hasPrevPage());
+    });
+
+  });
+
   describe('With no options', function() {
 
     beforeEach(function() {

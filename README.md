@@ -108,6 +108,8 @@ collected when it falls out of scope.
 
 `paginated:change:page` - Fired whenever the page is changed.
 
+`paginated:destroy' - Fired when the proxy is destroyed
+
 ## Installation
 
 ### Usage with Bower

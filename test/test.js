@@ -852,7 +852,6 @@ describe('PaginatedCollection', function() {
       var called = false;
       paginated.on('all', function(e) {
         if (e !== 'paginated:destroy') {
-          console.log(e);
           called = true;
         }
       });

@@ -94,6 +94,10 @@ will always be equal to the superset.
 
 Return a reference to the original collection.
 
+### paginated.destroy()
+
+Remove all ties to the superset and stop updating. Will now be garbage 
+collected when it falls out of scope.
 
 ## Events
 

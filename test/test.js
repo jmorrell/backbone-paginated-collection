@@ -831,5 +831,66 @@ describe('PaginatedCollection', function() {
 
   });
 
+  describe('destroying the proxy', function() {
+
+    beforeEach(function() {
+      superset = new Backbone.Collection(mockData);
+      paginated = new PaginatedCollection(superset, { perPage: 15 });
+    });
+
+    it('should fire an event on destruction', function() {
+      var called = false;
+      paginated.on('paginated:destroy', function() {
+        called = true;
+      });
+
+      paginated.destroy();
+      assert(called);
+    });
+
+    it('should fire no other events on destruction', function() {
+      var called = false;
+      paginated.on('all', function(e) {
+        if (e !== 'paginated:destroy') {
+          console.log(e);
+          called = true;
+        }
+      });
+
+      paginated.destroy();
+      assert(!called);
+    });
+
+    it('should have 0 length and 0 pages afterward', function() {
+      paginated.destroy();
+      assert(paginated.length === 0);
+      assert(paginated.getNumPages() === 0);
+    });
+
+    it('should not repond to changes in the superset', function() {
+      paginated.destroy();
+      superset.add({ n: 9000 });
+
+      assert(paginated.length === 0);
+      assert(paginated.getNumPages() === 0);
+    });
+
+    it('should emit no events after', function() {
+      paginated.destroy();
+
+      var called = false;
+      paginated.on('all', function(e) {
+        called = true;
+      });
+
+      superset.add({ n: 9000 });
+      superset.remove(superset.first());
+      superset.reset([{ n: 1 }]);
+
+      assert(!called);
+    });
+
+  });
+
 });
 

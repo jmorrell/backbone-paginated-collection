@@ -175,6 +175,17 @@ var methods = {
 
   superset: function() {
     return this._superset;
+  },
+
+  destroy: function() {
+    this.stopListening();
+    this._collection.reset([]);
+    this._superset = this._collection;
+    this._page = 0;
+    this._totalPages = 0;
+    this.length = 0;
+
+    this.trigger('paginated:destroy');
   }
 
 };

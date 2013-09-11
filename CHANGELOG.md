@@ -1,3 +1,8 @@
+v0.3.1
+
+* Fixed bug when superset is empty
+* Added ability to destroy proxy
+
 v0.3.0
 
 * Reworked the way models are added / removed

@@ -47,6 +47,16 @@ describe('PaginatedCollection', function() {
       assert(!paginated.hasPrevPage());
     });
 
+    it('adding a model should increase the length', function() {
+      assert(paginated.length === 0);
+
+      superset.add({ n: 1 });
+      assert(paginated.length === 1);
+
+      superset.add({ n: 2 });
+      assert(paginated.length === 2);
+    });
+
   });
 
   describe('With no options', function() {

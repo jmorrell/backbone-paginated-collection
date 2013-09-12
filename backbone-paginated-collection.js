@@ -143,6 +143,7 @@ var methods = {
     // set it to the limit.
     page = page > lowerLimit ? page : lowerLimit;
     page = page < upperLimit ? page : upperLimit;
+    page = page < 0 ? 0 : page;
 
     this._page = page;
     updatePagination.call(this);

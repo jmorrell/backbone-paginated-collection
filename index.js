@@ -15,6 +15,7 @@ function updatePagination() {
 }
 
 function updateNumPages() {
+  var currentNumPages = this._totalPages;
   var length = this.superset().length;
   var perPage = this.getPerPage();
 
@@ -24,7 +25,12 @@ function updateNumPages() {
   var totalPages = length % perPage === 0 ?
     (length / perPage) : Math.floor(length / perPage) + 1;
 
+  var numPagesChanged = this._totalPages !== totalPages;
   this._totalPages = totalPages;
+
+  if (numPagesChanged) {
+    this.trigger('paginated:change:numPages', { numPages: totalPages });
+  }
 
   // Test to see if we are past the last page, and if so,
   // move back. Return true so that we can test to see if

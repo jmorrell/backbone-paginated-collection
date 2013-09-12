@@ -883,6 +883,41 @@ describe('PaginatedCollection', function() {
       called = false;
     });
 
+    it('paginated:change:numPages', function() {
+      var called = false;
+      var numPages;
+
+      paginated.on('paginated:change:numPages', function(details) {
+        numPages = details.numPages;
+        called = true;
+      });
+
+      assert(!called);
+
+      // The last page has 10 models, so if we get rid of them the number
+      // of pages will change
+
+      // remove the first 9, nothing happens
+      for (var i = 0; i < 9; i += 1) {
+        superset.remove(superset.last());
+      }
+
+      assert(!called);
+
+      // remove the last model on the last page, and the event should fire
+      superset.remove(superset.last());
+
+      assert(called);
+      assert(numPages === 6);
+
+      // Now let's add another model to make sure we fire the event again
+      called = false;
+      numPages = null;
+      superset.add({ n: 1000 });
+      assert(called);
+      assert(numPages === 7);
+    });
+
   });
 
   describe('destroying the proxy', function() {

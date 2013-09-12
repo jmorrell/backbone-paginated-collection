@@ -116,7 +116,9 @@ collected when it falls out of scope.
 
 `paginated:change:page` - Fired whenever the page is changed.
 
-`paginated:destroy' - Fired when the proxy is destroyed
+`paginated:change:numPages` - Fired whenever the number of pages is changed.
+
+`paginated:destroy` - Fired when the proxy is destroyed
 
 ## Installation
 

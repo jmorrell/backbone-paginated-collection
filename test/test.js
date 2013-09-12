@@ -34,6 +34,10 @@ describe('PaginatedCollection', function() {
       paginated = new PaginatedCollection(superset, { perPage: 10 });
     });
 
+    it('should be on the 0th page', function() {
+      assert(paginated.getPage() === 0);
+    });
+
     it('should have 0 pages', function() {
       assert(paginated.getNumPages() === 0);
     });
@@ -45,6 +49,26 @@ describe('PaginatedCollection', function() {
     it('should not have a next or previous page', function() {
       assert(!paginated.hasNextPage());
       assert(!paginated.hasPrevPage());
+    });
+
+    it("changing the page doesn't change the page", function() {
+      paginated.nextPage();
+      assert(paginated.getPage() === 0);
+
+      paginated.prevPage();
+      assert(paginated.getPage() === 0);
+
+      paginated.movePage(2);
+      assert(paginated.getPage() === 0);
+
+      paginated.movePage(-2);
+      assert(paginated.getPage() === 0);
+
+      paginated.firstPage();
+      assert(paginated.getPage() === 0);
+
+      paginated.lastPage();
+      assert(paginated.getPage() === 0);
     });
 
     it('adding a model should increase the length', function() {
@@ -213,6 +237,26 @@ describe('PaginatedCollection', function() {
 
       paginated.movePage(-100);
       assert(paginated.getPage() === 0);
+    });
+
+    it('should be able to jump to the first page', function() {
+      paginated.setPage(3);
+
+      paginated.firstPage();
+
+      assert(paginated.getPage() === 0);
+      assert(paginated.hasNextPage());
+      assert(!paginated.hasPrevPage());
+    });
+
+    it('should be able to jump to the last page', function() {
+      paginated.setPage(3);
+
+      paginated.lastPage();
+
+      assert(paginated.getPage() === 6);
+      assert(!paginated.hasNextPage());
+      assert(paginated.hasPrevPage());
     });
 
     it('`removePagination` should remove all pagination settings', function() {

@@ -85,6 +85,14 @@ Move to the next page. Equivalent to `paginated.movePage(1)`.
 
 Move to the previous page. Equivalent to `paginated.movePage(-1)`.
 
+### paginated.firstPage()
+
+Move to the first page of the collection. Equivalent to `paginated.setPage(0)`.
+
+### paginated.lastPage()
+
+Move to the last page of the collection. Equivalent to `paginated.setPage(paginated.getNumPages() - 1)`.
+
 ### paginated.removePagination()
 
 Get rid of any paginated settings. This means the paginated collection

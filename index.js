@@ -169,6 +169,14 @@ var methods = {
     return this;
   },
 
+  firstPage: function() {
+    this.setPage(0);
+  },
+
+  lastPage: function() {
+    this.setPage(this.getNumPages() - 1);
+  },
+
   movePage: function(delta) {
     this.setPage(this.getPage() + delta);
     return this;

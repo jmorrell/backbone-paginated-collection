@@ -1,3 +1,9 @@
+v0.3.2
+
+* Added a new event when number of pages changes
+* Added methods to jump to first or last page
+* Fixed bug when length of superset is zero
+
 v0.3.1
 
 * Fixed bug when superset is empty

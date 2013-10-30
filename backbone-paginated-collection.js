@@ -224,7 +224,9 @@ _.extend(Paginated.prototype, methods, Backbone.Events);
 module.exports =  Paginated;
 
 
-},{"backbone":false,"backbone-collection-proxy":2,"underscore":false}],2:[function(require,module,exports){
+},{"backbone":false,"backbone-collection-proxy":3,"underscore":false}],"backbone-paginated-collection":[function(require,module,exports){
+module.exports=require('PxKHrf');
+},{}],3:[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -237,23 +239,41 @@ var blacklistedMethods = [
   "listenTo", "listenToOnce", "bind", "trigger", "once", "stopListening"
 ];
 
+var eventWhiteList = [
+  'add', 'remove', 'reset', 'sort', 'destroy'
+];
+
 function proxyCollection(from, target) {
 
   function updateLength() {
     target.length = from.length;
   }
 
-  function pipeEvents() {
+  function pipeEvents(eventName) {
     var args = _.toArray(arguments);
+    var isChangeEvent = eventName === 'change' ||
+                        eventName.slice(0, 7) === 'change:';
 
-    // replace any references to `from` with `this`
-    for (var i = 1; i < args.length; i++) {
-      if (args[i] && args[i].length && args[i].length === from.length) {
-        args[i] = this;
-      }
+    // In the case of a `reset` event, the Collection.models reference
+    // is updated to a new array, so we need to update our reference.
+    if (eventName === 'reset') {
+      target.models = from.models;
     }
 
-    this.trigger.apply(this, args);
+    if (_.contains(eventWhiteList, eventName)) {
+      if (_.contains(['add', 'remove', 'destory'], eventName)) {
+        args[2] = target;
+      } else if (_.contains(['reset', 'sort'], eventName)) {
+        args[1] = target;
+      }
+      target.trigger.apply(this, args);
+    } else if (isChangeEvent) {
+      // In some cases I was seeing change events fired after the model
+      // had already been removed from the collection.
+      if (target.contains(args[1])) {
+        target.trigger.apply(this, args);
+      }
+    }
   }
 
   var methods = {};
@@ -270,6 +290,7 @@ function proxyCollection(from, target) {
 
   target.listenTo(from, 'all', updateLength);
   target.listenTo(from, 'all', pipeEvents);
+  target.models = from.models;
 
   updateLength();
   return target;
@@ -278,9 +299,7 @@ function proxyCollection(from, target) {
 module.exports = proxyCollection;
 
 
-},{"backbone":false,"underscore":false}],"backbone-paginated-collection":[function(require,module,exports){
-module.exports=require('PxKHrf');
-},{}]},{},[])
+},{"backbone":false,"underscore":false}]},{},[])
 ;
 return require('backbone-paginated-collection');
 

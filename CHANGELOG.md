@@ -1,3 +1,7 @@
+v0.3.3
+
+* Updated build with latest backbone-collection-proxy.
+
 v0.3.2
 
 * Added a new event when number of pages changes

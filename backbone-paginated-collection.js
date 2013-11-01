@@ -116,7 +116,7 @@ function Paginated(superset, options) {
   proxyCollection(this._collection, this);
 
   this.listenTo(this._superset, 'add remove', onAddRemove);
-  this.listenTo(this._superset, 'reset', recalculatePagination);
+  this.listenTo(this._superset, 'reset sort', recalculatePagination);
 }
 
 var methods = {

@@ -1,3 +1,7 @@
+v0.3.5
+
+* Update dependency version requirements
+
 v0.3.4
 
 * Recalculate pagination on `sort`

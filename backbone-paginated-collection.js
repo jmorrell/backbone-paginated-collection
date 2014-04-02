@@ -10,7 +10,7 @@
     }
 }(this, function(_, Backbone) {
 var require=function(name){return {"backbone":Backbone,"underscore":_}[name];};
-require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"PxKHrf":[function(require,module,exports){
+require=(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"Focm2+":[function(require,module,exports){
 
 var _ = require('underscore');
 var Backbone = require('backbone');
@@ -225,7 +225,7 @@ module.exports =  Paginated;
 
 
 },{"backbone":false,"backbone-collection-proxy":3,"underscore":false}],"backbone-paginated-collection":[function(require,module,exports){
-module.exports=require('PxKHrf');
+module.exports=require('Focm2+');
 },{}],3:[function(require,module,exports){
 
 var _ = require('underscore');
@@ -261,7 +261,7 @@ function proxyCollection(from, target) {
     }
 
     if (_.contains(eventWhiteList, eventName)) {
-      if (_.contains(['add', 'remove', 'destory'], eventName)) {
+      if (_.contains(['add', 'remove', 'destroy'], eventName)) {
         args[2] = target;
       } else if (_.contains(['reset', 'sort'], eventName)) {
         args[1] = target;
@@ -300,7 +300,6 @@ module.exports = proxyCollection;
 
 
 },{"backbone":false,"underscore":false}]},{},[])
-;
 return require('backbone-paginated-collection');
 
 }));

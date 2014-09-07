@@ -1,3 +1,7 @@
+v0.3.6
+
+* Update dependency and build
+
 v0.3.5
 
 * Update dependency version requirements

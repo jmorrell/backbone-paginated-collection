@@ -35,7 +35,9 @@ function updateNumPages() {
   // Test to see if we are past the last page, and if so,
   // move back. Return true so that we can test to see if
   // this happened.
-  if (this.getPage() >= totalPages) {
+  // We don't want this behaviour on an newly empty superset, as it
+  // prevent the remove event to be triggered
+  if (this.getPage() >= totalPages && this.superset().length > 0) {
     this.setPage(totalPages - 1);
     return true;
   }

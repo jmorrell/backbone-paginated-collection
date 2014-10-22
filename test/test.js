@@ -764,6 +764,23 @@ describe('PaginatedCollection', function() {
       assert(called);
     });
 
+    it('remove event on removing last model', function() {
+      var superset = new Backbone.Collection({ a:'a' });
+      var paginated = new PaginatedCollection(superset);
+      var model = superset.first();
+
+      var called = false;
+      paginated.on('remove', function(m, collection) {
+        assert(m === model);
+        assert(collection === paginated);
+        called = true;
+      });
+
+      superset.remove(model);
+
+      assert(called);
+    });
+
     it("no remove event when removing a model not on the current page", function() {
       var model = superset.last();
 
